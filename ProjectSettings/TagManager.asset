@@ -6,6 +6,7 @@ TagManager:
   tags:
   - RubyController
   - Ammo
+  - Powerup
   layers:
   - Default
   - TransparentFX
