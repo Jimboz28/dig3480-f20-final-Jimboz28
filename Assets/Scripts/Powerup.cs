@@ -1,0 +1,17 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Powerup : MonoBehaviour
+{
+        void OnTriggerStay2D(Collider2D other)
+    {
+       RubyController controller = other.GetComponent<RubyController>();
+       
+       if (controller != null)
+       {
+           controller.SpeedPowerup();
+       }
+       Destroy(gameObject);
+    }
+}

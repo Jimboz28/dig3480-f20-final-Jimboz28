@@ -5,6 +5,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     Rigidbody2D rigidbody2d;
+    public int bossHealth = 5;
     // Start is called before the first frame update
     void Awake()
     {
@@ -22,6 +23,19 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    /*void OnTriggerEnter2D(Collider2D other)
+    {
+       BossRobot damage = other.GetComponent<BossRobot>();
+       
+       if (damage != null)
+       {
+           if (damage.bossHealth < damage.bossMaxHealth)
+           {
+           damage.ChangeBossHealth(-1);
+           Destroy (gameObject);
+           }
+       }
+    }*/
     void OnCollisionEnter2D(Collision2D other)
     {
         EnemyController e = other.collider.GetComponent<EnemyController>();
@@ -35,7 +49,18 @@ public class Projectile : MonoBehaviour
         {
             b.Fix();
         }
-        Destroy(gameObject);
-        
+        BossRobot c = other.collider.GetComponent<BossRobot>();
+        if (c != null)
+        {
+            if (c.bossHealth >= 0)
+           {
+           c.ChangeBossHealth(1);
+           }
+            if (c.bossHealth <= 0)
+            {
+                c.Fix();
+            }
+        }
+    Destroy(gameObject);
     }
 }

@@ -19,7 +19,7 @@ public class RubyController : MonoBehaviour
     public int score {get {return currentScore; }}
     public int currentScore;
     public int minScore = 0;
-    public int maxScore = 4;
+    public int maxScore = 5;
     public int cogs;
     // public int scoreAmount = 0;
 
@@ -29,6 +29,8 @@ public class RubyController : MonoBehaviour
     
     public AudioClip throwSound;
     public AudioClip hitSound;
+    public AudioClip ammoPickup;
+    public AudioClip jambiTalk;
     //bkg music?
     public AudioClip musicClipOne;
     public AudioClip musicClipTwo;
@@ -40,6 +42,10 @@ public class RubyController : MonoBehaviour
     public float timeInvincible = 2.0f;
     bool isInvincible;
     float invincibleTimer;
+
+    public float timePowerup = 2.0f;
+    bool isPowerup;
+    float powerupTimer;
     
     Rigidbody2D rigidbody2d;
     float horizontal;
@@ -50,12 +56,14 @@ public class RubyController : MonoBehaviour
     
     AudioSource audioSource;
     public AudioSource musicSource;
+    SpriteRenderer sprite;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidbody2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        sprite = GetComponent <SpriteRenderer>();
         // ScoreAmount = 0;
         // countText.text = count.ToString();
         currentHealth = maxHealth;
@@ -94,6 +102,19 @@ public class RubyController : MonoBehaviour
             if (invincibleTimer < 0)
             isInvincible = false;
         }
+        if (isPowerup)
+        {
+            sprite.color = new Color (1,1,0,1);
+            speed = 5.0f;
+            powerupTimer -= Time.deltaTime;
+            if (powerupTimer < 0)
+            isPowerup = false;
+        }
+        else if (!isPowerup)
+        {
+            sprite.color = new Color (1,1,1,1);
+            speed = 3.0f;
+        }
         if (Input.GetKeyDown(KeyCode.C))
         {
             if (cogs > 0)
@@ -109,7 +130,7 @@ public class RubyController : MonoBehaviour
                 NonPlayerCharacter character = hit.collider.GetComponent<NonPlayerCharacter>();
                 if (character !=null)
                 {
-                    if (currentScore >= 4)
+                    if (currentScore >= 5)
                     {
                         
                         character.DisplayDialogNextLevel();
@@ -119,12 +140,13 @@ public class RubyController : MonoBehaviour
                     else
                     {
                     character.DisplayDialog();
+                    PlaySound(jambiTalk);
                     }
                 }
             }
         }
         // win condition
-        if (currentScore >= 4)
+        if (currentScore >= 5)
         {
             gameOver = true;
             // staticVar = true;
@@ -136,9 +158,11 @@ public class RubyController : MonoBehaviour
 
             }
         }
+
         }
         if (health <= 0)
         {
+            gameOverText.text = "You lose! Game Created by James Hilley. Press 'R' to restart!";
             PlaySound(musicClipThree);
             speed = 0.0f;
             gameOver = true;
@@ -175,7 +199,16 @@ public class RubyController : MonoBehaviour
 
         rigidbody2d.MovePosition(position);
     }
+    public void SpeedPowerup ()
+    {
+        
+        powerupTimer=timePowerup;
+        isPowerup = true;
 
+        if (isPowerup)
+        return;
+
+    }
     public void ChangeHealth (int amount)
     {
         if (amount < 0)
@@ -228,6 +261,7 @@ public class RubyController : MonoBehaviour
             cogText.text = cogs.ToString();
             SetCountText();
             Destroy(collision.collider.gameObject);
+            PlaySound(ammoPickup);
         }
 }
     
@@ -235,7 +269,7 @@ public class RubyController : MonoBehaviour
     {
         countText.text = "Robots Fixed: " + currentScore.ToString();
         cogText.text = "Cogs: " + cogs.ToString();
-        if (currentScore >= 4)
+        if (currentScore >= 5)
         {
                 gameOverText.text = "Talk to Jambi to go to level 2. Press 'R' to restart!";
                 //musicSource.clip = musicClipTwo;
@@ -243,15 +277,14 @@ public class RubyController : MonoBehaviour
         }
         if (level == 2)
         {
-            if (currentScore >= 4)
+            if (currentScore >= 5)
                 {
             speed = 0;
-            musicSource.clip=musicClipTwo;
+            musicSource.clip = musicClipTwo;
             musicSource.Play();
             gameOverText.text = "You Win, Game Created by James Hilley. Press 'R' to restart!";
             }
         }
-    
 
     }
 
